@@ -1,0 +1,10 @@
+pydantic>=2.6
+opentelemetry-api>=1.24
+opentelemetry-sdk>=1.24
+pyyaml>=6.0
+
+[dev]
+pytest>=8.0
+
+[otel]
+opentelemetry-exporter-otlp-proto-http>=1.24

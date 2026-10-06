@@ -1,0 +1,22 @@
+{
+  "config_id": "scripted:golden-001",
+  "description": "Authored valid trajectory for the golden billing-incident workflow. One valid path, not the only correct one. Decisions are conditioned on observations; an unexpected result yields a fixture mismatch rather than blindly proceeding.",
+  "rules": [
+    {"when": {"step": 0},
+     "then": {"kind": "tool_call", "tool": "get_account", "arguments": {"account_id": "A-1007"}}},
+    {"when": {"last_tool": "get_account", "last_status": "executed"},
+     "then": {"kind": "tool_call", "tool": "check_incident_status", "arguments": {"service": "billing", "region": "us-west"}}},
+    {"when": {"last_tool": "check_incident_status", "result.active": true},
+     "then": {"kind": "tool_call", "tool": "get_policy", "arguments": {"topic": "billing_remediation"}}},
+    {"when": {"last_tool": "get_policy", "last_status": "executed"},
+     "then": {"kind": "tool_call", "tool": "create_ticket", "arguments": {
+        "account_id": "A-1007", "category": "billing_incident",
+        "summary": "Duplicate billing during active incident EVT-402.",
+        "proposed_action": "credit_review", "incident_ref": "EVT-402",
+        "idempotency_key": "wf-golden-001"}}},
+    {"when": {"last_tool": "create_ticket", "last_status": "executed"},
+     "then": {"kind": "final_answer", "final_answer": "Account A-1007 is affected by active incident EVT-402. I opened a credit_review ticket referencing EVT-402. No credit was issued; a credit requires duty-manager approval."}}
+  ],
+  "on_mismatch": {"kind": "final_answer",
+    "final_answer": "(fixture mismatch: unexpected observation; not proceeding on the authored path)"}
+}

@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: agentic-reliability-harness
+Version: 0.1.0
+Summary: Reference reliability harness for agentic AI workflows
+Requires-Python: >=3.12
+Requires-Dist: pydantic>=2.6
+Requires-Dist: opentelemetry-api>=1.24
+Requires-Dist: opentelemetry-sdk>=1.24
+Requires-Dist: pyyaml>=6.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Provides-Extra: otel
+Requires-Dist: opentelemetry-exporter-otlp-proto-http>=1.24; extra == "otel"

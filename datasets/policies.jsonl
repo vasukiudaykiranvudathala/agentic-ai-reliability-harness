@@ -1,0 +1,2 @@
+{"topic":"billing_remediation","summary":"Billing errors linked to an active incident get a credit_review ticket; credits require duty-manager approval.","proposed_action":"credit_review"}
+{"topic":"refund_general","summary":"Refunds outside an incident follow the standard refund workflow.","proposed_action":"standard_refund"}

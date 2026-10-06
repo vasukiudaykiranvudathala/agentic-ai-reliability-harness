@@ -1,0 +1,41 @@
+# Optional local telemetry stack. NOT required for the test suite.
+#   Default (traces):   docker compose up
+#   With metrics stack: docker compose --profile perf up
+#
+# Then run the harness with OTLP export:
+#   ARH_OTLP_ENDPOINT=http://localhost:4318/v1/traces python -m arh.telemetry.export_demo
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.104.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./deploy/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4318:4318"   # OTLP HTTP
+      - "4317:4317"   # OTLP gRPC
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    ports:
+      - "16686:16686"  # Jaeger UI
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    profiles: ["perf"]
+    volumes:
+      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    profiles: ["perf"]
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
